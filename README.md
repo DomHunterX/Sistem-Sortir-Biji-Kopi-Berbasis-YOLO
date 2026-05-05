@@ -13,7 +13,7 @@ Sistem pemilah biji kopi otomatis menggunakan AI (YOLO) untuk deteksi kualitas d
 - **Servo SG90** - Aktuator gate pemilah
 - **Motor DC + Driver L298N** - Konveyor belt
 - **LCD I2C 16x2** - Display lokal
-- **Power Supply 12V** - Untuk motor dan driver
+- **Power Supply 7.4** - Untuk motor dan driver
 
 ### Software:
 - **Python 3.8+** - YOLO detection system
