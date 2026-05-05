@@ -1,0 +1,22 @@
+# Dependencies untuk Sistem Deteksi YOLO
+# Install dengan: pip install -r requirements.txt
+
+# YOLO Detection
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Computer Vision
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# Serial Communication
+pyserial>=3.5
+
+# Dataset Management & Visualization
+matplotlib>=3.7.0
+pillow>=10.0.0
+pyyaml>=6.0
+
+# Optional: Untuk anotasi offline
+# labelImg  # Uncomment jika ingin install via pip
