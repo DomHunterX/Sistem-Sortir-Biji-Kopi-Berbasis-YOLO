@@ -5,9 +5,9 @@
 #include <BlynkSimpleEsp32.h>
 
 // ================= KONFIGURASI BLYNK & WIFI =================
-#define BLYNK_TEMPLATE_ID "TMPL_XXXXXXXX"  // Dari Blynk Console
+#define BLYNK_TEMPLATE_ID "TMPL68Y7uKsnv"  // Dari Blynk Console
 #define BLYNK_TEMPLATE_NAME "Kopi Sorting"
-#define BLYNK_AUTH_TOKEN "YOUR_BLYNK_AUTH_TOKEN_HERE"  // Token dari Blynk
+#define BLYNK_AUTH_TOKEN "x8tDHI-XqvG59uUCkCdAcKVPk58arpbS"  // Token dari Blynk
 
 const char* ssid = "YOUR_WIFI_SSID";        // Nama WiFi Anda
 const char* password = "YOUR_WIFI_PASSWORD"; // Password WiFi Anda
