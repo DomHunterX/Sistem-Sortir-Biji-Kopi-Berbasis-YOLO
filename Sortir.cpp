@@ -1,16 +1,17 @@
+// ================= KONFIGURASI BLYNK & WIFI =================
+#define BLYNK_TEMPLATE_ID "TMPL68Y7uKsnv"  // Dari Blynk Console
+#define BLYNK_TEMPLATE_NAME "Kopi Sorting"
+#define BLYNK_AUTH_TOKEN "x8tDHI-XqvG59uUCkCdAcKVPk58arpbS"  // Token dari Blynk
+
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <ESP32Servo.h>
 #include <WiFi.h>
 #include <BlynkSimpleEsp32.h>
 
-// ================= KONFIGURASI BLYNK & WIFI =================
-#define BLYNK_TEMPLATE_ID "TMPL_XXXXXXXX"  // Dari Blynk Console
-#define BLYNK_TEMPLATE_NAME "Kopi Sorting"
-#define BLYNK_AUTH_TOKEN "YOUR_BLYNK_AUTH_TOKEN_HERE"  // Token dari Blynk
 
-const char* ssid = "YOUR_WIFI_SSID";        // Nama WiFi Anda
-const char* password = "YOUR_WIFI_PASSWORD"; // Password WiFi Anda
+const char* ssid = "Kaum Mendang Mending";        // Nama WiFi Anda
+const char* password = "zidan123"; // Password WiFi Anda
 
 // Virtual Pins Blynk (untuk monitoring di dashboard)
 #define VPIN_TOTAL    V0  // Total biji kopi
@@ -28,11 +29,11 @@ const int IN2_PIN = 27;
 
 // Pin Sensor & Aktuator
 const int IR_PIN = 32;  // GPIO 32 - IR Sensor (Active-HIGH)
-const int SERVO_PIN = 13;
+const int SERVO_PIN = 18;
 
 // Pin LCD I2C menggunakan default ESP32: SDA = 21, SCL = 22
 // =====================================================================
-
+ 
 // Inisialisasi Objek
 LiquidCrystal_I2C lcd(0x27, 16, 2); // Alamat I2C umumnya 0x27 atau 0x3F
 Servo servoGate;
@@ -142,7 +143,7 @@ void setup() {
   // Menyalakan Konveyor (Berjalan kontinyu)
   digitalWrite(IN1_PIN, HIGH);
   digitalWrite(IN2_PIN, LOW);
-  analogWrite(ENA_PIN, 150); // Kecepatan motor (0-255), sesuaikan kebutuhan
+  analogWrite(ENA_PIN, 200); // Kecepatan motor (0-255), sesuaikan kebutuhan
   Serial.println("Konveyor started!");
 
   // Kirim status awal ke Blynk
@@ -153,12 +154,9 @@ void setup() {
 }
 
 void loop() {
-  // Maintain Blynk connection
   Blynk.run();
 
-  // 1. TERIMA FLAG DARI YOLO (Titik Inspeksi)
-  // Python mengirim 'C' untuk Cacat, 'B' untuk Bagus
-  // Bersihkan buffer serial untuk menghindari overflow
+  // Terima flag dari YOLO
   while (Serial.available() > 0) {
     char dataMasuk = Serial.read();
     if (dataMasuk == 'C' || dataMasuk == 'c') {
@@ -173,63 +171,43 @@ void loop() {
       Serial.println("Flag: BAGUS Terdeteksi!");
       Blynk.virtualWrite(VPIN_STATUS, "Deteksi: BAGUS");
     }
-    delay(1); // Debouncing untuk serial
   }
 
-  // 2. DETEKSI FISIK & EKSEKUSI (Titik Eksekusi)
   irState = digitalRead(IR_PIN);
 
-  // Deteksi transisi IR dari LOW ke HIGH (Active-HIGH: objek terdeteksi)
-  if (irState == HIGH && lastIrState == LOW) {
+  if (irState == LOW && lastIrState == HIGH) {  // LOW = objek terdeteksi
     totalKopi++;
     Serial.println("\nIR Sensor: Biji kopi terdeteksi di gerbang!");
     
-    // Keputusan Eksekusi berdasarkan Flag YOLO
-    // Jika tidak ada flag dari YOLO, default anggap BAGUS
     if (flagReceived && isDefectFlag == true) {
-      // Biji Cacat -> Buang
       kopiCacat++;
       Serial.println("Aksi: MEMBUANG biji cacat");
       Blynk.virtualWrite(VPIN_STATUS, "Membuang Cacat");
       
       servoGate.write(POSISI_BUANG); 
-      delay(800); // Beri waktu biji jatuh ke wadah cacat
-      servoGate.write(POSISI_NORMAL); // Kembalikan posisi servo
+      delay(800);
+      servoGate.write(POSISI_NORMAL);
     } 
     else {
-      // Biji Bagus (atau tidak ada flag) -> Biarkan lewat
       kopiBagus++;
-      if (!flagReceived) {
-        Serial.println("Aksi: MENERIMA (tidak ada flag YOLO, default BAGUS)");
-      } else {
-        Serial.println("✅ Aksi: MENERIMA biji bagus");
-      }
+      Serial.println("Aksi: MENERIMA biji bagus");
       Blynk.virtualWrite(VPIN_STATUS, "Menerima Bagus");
-      
-      // Servo tetap diam, beri jeda agar biji lewat sepenuhnya
       delay(400); 
     }
     
-    // Reset flag setelah eksekusi (PENTING: reset untuk kedua kasus!)
     isDefectFlag = false;
     flagReceived = false;
     
-    // 3. UPDATE MONITORING (LCD & Blynk)
     updateLCD();
     sendToBlynk();
     
-    // Log statistik
-    Serial.print("📊 Total: ");
-    Serial.print(totalKopi);
-    Serial.print(" | Bagus: ");
-    Serial.print(kopiBagus);
-    Serial.print(" | Cacat: ");
-    Serial.println(kopiCacat);
-    Serial.println("---");
+    Serial.print("Total: "); Serial.print(totalKopi);
+    Serial.print(" | Bagus: "); Serial.print(kopiBagus);
+    Serial.print(" | Cacat: "); Serial.println(kopiCacat);
   }
   
-  lastIrState = irState; // Simpan status terakhir IR
-  delay(10); // Debouncing sederhana
+  lastIrState = irState;
+  delay(10);
 }
 
 // Fungsi untuk memperbarui tampilan LCD

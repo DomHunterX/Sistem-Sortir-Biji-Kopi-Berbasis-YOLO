@@ -121,28 +121,20 @@ class KopiSortingSystem:
         Klasifikasi kualitas biji kopi
         Mode: placeholder atau custom (sesuai config.py)
         """
-        confidence = detection.conf
-        class_id = int(detection.cls)
+        confidence = float(detection.conf.item())   # Fix: konversi ke float
+        class_id = int(detection.cls.item())         # Fix: konversi ke int
         class_name = self.model.names[class_id].lower()
-        
+
         if CLASSIFICATION_CONFIG['mode'] == 'custom':
-            # Mode custom: berdasarkan class name dari model
             if class_name in CLASSIFICATION_CONFIG['classes']['bagus']:
                 return "BAGUS"
             elif class_name in CLASSIFICATION_CONFIG['classes']['cacat']:
                 return "CACAT"
             else:
-                # Default jika class tidak dikenali
                 logger.warning(f"Unknown class: {class_name}")
                 return "CACAT"
         else:
-            # Mode placeholder: simulasi random untuk testing
-            # CATATAN: Ini hanya untuk testing! Ganti dengan model custom untuk produksi
-            # Gunakan posisi Y dari bounding box sebagai "simulasi kualitas"
-            # Biji di bagian atas frame = BAGUS, bawah = CACAT
             import random
-            
-            # Simulasi: 70% BAGUS, 30% CACAT (untuk testing yang realistis)
             if random.random() < 0.7:
                 logger.info(f"Placeholder mode: Simulated as BAGUS (confidence: {confidence:.2f})")
                 return "BAGUS"

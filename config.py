@@ -1,8 +1,3 @@
-"""
-KONFIGURASI SISTEM SORTIR KOPI
-File ini berisi semua parameter yang dapat disesuaikan
-"""
-
 # ==================== SERIAL COMMUNICATION ====================
 SERIAL_CONFIG = {
     'port': 'COM3',          # Port ESP32 (Windows: COM3, Linux: /dev/ttyUSB0)
@@ -22,7 +17,7 @@ CAMERA_CONFIG = {
 YOLO_CONFIG = {
     'model_path': 'yolov8n.pt',  # Model file (yolov8n/s/m/l/x)
     'confidence': 0.5,            # Minimum confidence (0.0-1.0)
-    'device': 'cuda',              # 'cpu' or 'cuda' (GPU)
+    'device': 'cpu',              # 'cpu' or 'cuda' (GPU)
     'verbose': False              # Show inference details
 }
 
